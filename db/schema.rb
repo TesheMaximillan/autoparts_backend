@@ -16,17 +16,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_130002) do
 
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
+    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.bigint "category_id", null: false
     t.string "name", null: false
     t.string "part_number"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_products_on_category_id"
+    t.index ["user_id"], name: "index_products_on_user_id"
   end
 
   create_table "products_purchases", id: false, force: :cascade do |t|
@@ -40,6 +44,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_130002) do
   end
 
   create_table "purchases", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.date "date"
     t.string "vendor_name"
     t.string "reference_number"
@@ -47,9 +52,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_130002) do
     t.decimal "price", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
   create_table "sales", force: :cascade do |t|
+    t.bigint "user_id", null: false
     t.date "date"
     t.string "customer_name"
     t.string "reference_number"
@@ -57,6 +64,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_130002) do
     t.decimal "price", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["user_id"], name: "index_sales_on_user_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -71,5 +79,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_11_130002) do
     t.index ["username"], name: "index_users_on_username", unique: true
   end
 
+  add_foreign_key "categories", "users"
   add_foreign_key "products", "categories"
+  add_foreign_key "products", "users"
+  add_foreign_key "purchases", "users"
+  add_foreign_key "sales", "users"
 end

@@ -1,4 +1,5 @@
 class Purchase < ApplicationRecord
+  belongs_to :user
   has_and_belongs_to_many :products, dependent: :destroy, join_table: :purchases_products
 
   validates :vendor_name, presence: true, length: { minimum: 3, maximum: 50 }

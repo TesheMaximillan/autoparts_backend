@@ -1,5 +1,9 @@
 class User < ApplicationRecord
   has_secure_password
+  has_many :categories, dependent: :destroy
+  has_many :sales, dependent: :destroy
+  has_many :purchases, dependent: :destroy
+  has_many :products, dependent: :destroy
 
   validates :username, presence: true, uniqueness: true, length: { minimum: 3, maximum: 20 }
   validates :full_name, presence: true, length: { minimum: 3, maximum: 20 }
