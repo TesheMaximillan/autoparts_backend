@@ -3,8 +3,9 @@ class CreateSales < ActiveRecord::Migration[7.0]
     create_table :sales do |t|
       t.references :user, null: false, foreign_key: true
       t.date :date
-      t.string :customer_name
+      t.string :received_by
       t.string :reference_number
+      t.string :status
       t.integer :quantity
       t.decimal :price, precision: 8, scale: 2
 

@@ -1,6 +1,8 @@
 class Sale < ApplicationRecord
-  has_and_belongs_to_many :products, dependent: :destroy, join_table: :sales_products
   belongs_to :user
+  has_many :sales_transactions, dependent: :destroy
+  has_many :products, through: :sales_transactions
+  has_many :customers, through: :sales_transactions
 
   validates :vendor_name, presence: true, length: { minimum: 3, maximum: 50 }
   validates :date, presence: true
