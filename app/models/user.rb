@@ -1,5 +1,8 @@
 class User < ApplicationRecord
   has_secure_password
+  has_many :stocks, dependent: :destroy
+  has_many :customers, dependent: :destroy
+  has_many :vendors, dependent: :destroy
   has_many :categories, dependent: :destroy
   has_many :sales, dependent: :destroy
   has_many :purchases, dependent: :destroy
