@@ -42,6 +42,6 @@ class Api::V1::ProductsController < ApplicationController
   private
 
   def product_params
-    params.require(:product).permit(:user_id, :name, :part_number, :category_id)
+    params.require(:product).permit(:user_id, :name, :part_number, :category_id, :stock_id, :cost, :selling, :quantity)
   end
 end
