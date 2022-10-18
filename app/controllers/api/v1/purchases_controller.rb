@@ -42,6 +42,6 @@ class Api::V1::PurchasesController < ApplicationController
   private
 
   def purchase_params
-    params.require(:purchase).permit(:user_id, :date, :vendor_name, :reference_number, :quantity, :price)
+    params.require(:purchase).permit(:user_id, :date, :vendor_id, :product_id, :received_by, :reference_number, :quantity, :price, :status)
   end
 end
