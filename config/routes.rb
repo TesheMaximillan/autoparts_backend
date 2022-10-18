@@ -6,9 +6,12 @@ Rails.application.routes.draw do
 
   namespace :api do
     namespace :v1 do
-      resources :categories do
-        resources :products, only: [:index, :create, :update, :destroy]
-      end
+      resources :categories, only: [:index, :create, :show, :update, :destroy]
+      resources :products, only: [:index, :show, :create, :update, :destroy]
+      resources :customers, only: [:index, :show, :create, :update, :destroy]
+      resources :vendors, only: [:index, :show, :create, :update, :destroy]
+      resources :stocks, only: [:index, :show, :create, :update, :destroy]
+      resources :transfers, only: [:index, :show, :create, :update, :destroy]
       resources :sales, only: [:index, :create, :show, :update, :destroy]
       resources :purchases, only: [:index, :create, :show, :update, :destroy]
       resources :sessions, only: [:create]

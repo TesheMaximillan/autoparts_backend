@@ -1,8 +1,8 @@
 class Sale < ApplicationRecord
   belongs_to :user
-  has_many :sales_transactions, dependent: :destroy
-  has_many :products, through: :sales_transactions
-  has_many :customers, through: :sales_transactions
+  has_many :sale_transactions, dependent: :destroy
+  has_many :products, through: :sale_transactions
+  has_many :customers, through: :sale_transactions
 
   validates :received_by, length: { minimum: 3, maximum: 50 }
   validates :date, presence: true

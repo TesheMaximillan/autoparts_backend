@@ -5,9 +5,9 @@ class Product < ApplicationRecord
   has_and_belongs_to_many :stocks, dependent: :destroy
   has_and_belongs_to_many :transfers, dependent: :destroy
 
-  has_many :sales_transactions, dependent: :destroy
-  has_many :sales, through: :sales_transactions
-  has_many :customers, through: :sales_transactions
+  has_many :sale_transactions, dependent: :destroy
+  has_many :sale, through: :sale_transactions
+  has_many :customers, through: :sale_transactions
   has_many :purchase_transactions, dependent: :destroy
   has_many :purchases, through: :purchase_transactions
   has_many :vendors, through: :purchase_transactions
