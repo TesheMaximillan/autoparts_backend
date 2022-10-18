@@ -42,6 +42,6 @@ class Api::V1::SalesController < ApplicationController
   private
 
   def sale_params
-    params.require(:sale).permit(:user_id, :date, :customer_name, :reference_number, :quantity, :price)
+    params.require(:sale).permit(:user_id, :date, :customer_id, :product_id, :received_by, :reference_number, :quantity, :price, :status)
   end
 end
