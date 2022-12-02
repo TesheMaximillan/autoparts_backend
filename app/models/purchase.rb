@@ -1,5 +1,5 @@
 class Purchase < ApplicationRecord
-  belongs_to :user
+  # belongs_to :user
   has_many :purchase_transactions, dependent: :destroy
   has_many :products, through: :purchase_transactions
   has_many :vendors, through: :purchase_transactions
@@ -10,4 +10,12 @@ class Purchase < ApplicationRecord
   validates :quantity, presence: true, numericality: { only_integer: true, greater_than: 0 }
   validates :price, presence: true, numericality: { greater_than: 0 }
   validates :status, presence: true, length: { minimum: 3, maximum: 50 }
+
+  before_save :downcase_field
+
+  def downcase_field
+    received_by.downcase!
+    reference_number.downcase!
+    status.downcase!
+  end
 end
