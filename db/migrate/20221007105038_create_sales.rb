@@ -1,6 +1,6 @@
-class CreateSale < ActiveRecord::Migration[7.0]
+class CreateSales < ActiveRecord::Migration[7.0]
   def change
-    create_table :sale do |t|
+    create_table :sales do |t|
       t.date :date
       t.string :received_by
       t.string :reference_number
