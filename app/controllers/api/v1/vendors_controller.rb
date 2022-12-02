@@ -1,6 +1,4 @@
 class Api::V1::VendorsController < ApplicationController
-  include CurrentUserConcern
-
   def index
     @vendors = Vendor.all
     render json: @vendors
@@ -8,7 +6,6 @@ class Api::V1::VendorsController < ApplicationController
 
   def create
     @vendor = Vendor.new(vendor_params)
-    @vendor.user = @current_user
 
     if @vendor.save
       render json: @vendor, status: :created
