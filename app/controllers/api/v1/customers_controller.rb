@@ -1,14 +1,11 @@
 class Api::V1::CustomersController < ApplicationController
-  include CurrentUserConcern
-
   def index
     @customers = Customer.all
     render json: @customers
   end
-  
+
   def create
     @customer = Customer.new(customer_params)
-    @customer.user = @current_user
 
     if @customer.save
       render json: @customer, status: :created
@@ -42,7 +39,6 @@ class Api::V1::CustomersController < ApplicationController
   private
 
   def customer_params
-    params.require(:customer).permit(:user_id, :name)
+    params.require(:customer).permit(:name)
   end
 end
-
