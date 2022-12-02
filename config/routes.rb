@@ -11,13 +11,15 @@ Rails.application.routes.draw do
       resources :customers, only: [:index, :show, :create, :update, :destroy]
       resources :vendors, only: [:index, :show, :create, :update, :destroy]
       resources :stocks, only: [:index, :show, :create, :update, :destroy]
-      resources :transfers, only: [:index, :show, :create, :update, :destroy]
+      resources :transfers, only: [:index, :create, :update, :destroy]
       resources :sales, only: [:index, :create, :show, :update, :destroy]
       resources :purchases, only: [:index, :create, :show, :update, :destroy]
       resources :sessions, only: [:create]
       resources :registrations, only: [:create]
+      resources :settings, only: [:index, :create, :update]
       delete :logout, to: "sessions#logout"
       get :logged_in, to: "sessions#logged_in"
+      get :stocks_products, to: "stocks#stocks_products"
     end
   end
 end
