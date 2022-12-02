@@ -1,14 +1,33 @@
 class Api::V1::StocksController < ApplicationController
-  include CurrentUserConcern
-
   def index
     @stocks = Stock.all
     render json: @stocks
   end
 
+  def stocks_products
+    @stocks_products = Stock.all.map do |stock|
+      {
+        stock:,
+        products: stock.products.map do |product|
+          {
+            id: product.id,
+            category_id: product.category_id,
+            name: product.name,
+            part_number: product.part_number,
+            brand: product.brand,
+            status: product.status,
+            selling: product.selling,
+            cost: product.cost,
+            quantity: stock.stock_products.where(product_id: product.id).first.quantity
+          }
+        end
+      }
+    end
+    render json: @stocks_products
+  end
+
   def create
     @stock = Stock.new(stock_params)
-    @stock.user = @current_user
 
     if @stock.save
       render json: @stock, status: :created
@@ -42,6 +61,6 @@ class Api::V1::StocksController < ApplicationController
   private
 
   def stock_params
-    params.require(:stock).permit(:user_id, :name)
+    params.require(:stock).permit(:name)
   end
 end
