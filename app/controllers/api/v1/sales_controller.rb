@@ -1,6 +1,4 @@
 class Api::V1::SalesController < ApplicationController
-  include CurrentUserConcern
-
   def index
     @sales = Sale.all
     render json: @sales
@@ -8,7 +6,6 @@ class Api::V1::SalesController < ApplicationController
 
   def create
     @sale = Sale.new(sale_params)
-    @sale.user = @current_user
 
     if @sale.save
       render json: @sale, status: :created
@@ -42,6 +39,7 @@ class Api::V1::SalesController < ApplicationController
   private
 
   def sale_params
-    params.require(:sale).permit(:user_id, :date, :customer_id, :product_id, :received_by, :reference_number, :quantity, :price, :status)
+    params.require(:sale).permit(:user_id, :date, :customer_id, :product_id, :received_by, :reference_number,
+                                 :quantity, :price, :status)
   end
 end
