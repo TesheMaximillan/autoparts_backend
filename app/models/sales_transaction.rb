@@ -1,4 +1,4 @@
-class SaleTransaction < ApplicationRecord
+class SalesTransaction < ApplicationRecord
   belongs_to :product
   belongs_to :sale
   belongs_to :customer
