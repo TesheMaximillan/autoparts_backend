@@ -10,48 +10,34 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_18_171145) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_27_194152) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
   create_table "categories", force: :cascade do |t|
     t.string "name", null: false
-    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_categories_on_user_id"
   end
 
   create_table "customers", force: :cascade do |t|
     t.string "name"
-    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_customers_on_user_id"
   end
 
   create_table "products", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.bigint "category_id", null: false
     t.string "name", null: false
-    t.string "part_number"
-    t.integer "quantity"
-    t.decimal "selling", precision: 8, scale: 2
-    t.decimal "cost", precision: 8, scale: 2
+    t.string "part_number", null: false
+    t.string "brand", default: "N/A"
+    t.string "status", default: "N/A"
+    t.decimal "selling", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "cost", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["category_id"], name: "index_products_on_category_id"
-    t.index ["user_id"], name: "index_products_on_user_id"
-  end
-
-  create_table "products_stocks", id: false, force: :cascade do |t|
-    t.bigint "stock_id", null: false
-    t.bigint "product_id", null: false
-  end
-
-  create_table "products_transfers", id: false, force: :cascade do |t|
-    t.bigint "transfer_id", null: false
-    t.bigint "product_id", null: false
+    t.index ["name", "part_number", "status"], name: "index_products_on_name_and_part_number_and_status", unique: true
   end
 
   create_table "purchase_transactions", force: :cascade do |t|
@@ -66,7 +52,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_171145) do
   end
 
   create_table "purchases", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.date "date"
     t.string "received_by"
     t.string "reference_number"
@@ -75,13 +60,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_171145) do
     t.decimal "price", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_purchases_on_user_id"
   end
 
   create_table "sale_transactions", force: :cascade do |t|
+    t.bigint "sale_id", null: false
     t.bigint "product_id", null: false
     t.bigint "customer_id", null: false
-    t.bigint "sale_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["customer_id"], name: "index_sale_transactions_on_customer_id"
@@ -90,7 +74,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_171145) do
   end
 
   create_table "sales", force: :cascade do |t|
-    t.bigint "user_id", null: false
     t.date "date"
     t.string "received_by"
     t.string "reference_number"
@@ -99,26 +82,52 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_171145) do
     t.decimal "price", precision: 8, scale: 2
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_sales_on_user_id"
+  end
+
+  create_table "settings", force: :cascade do |t|
+    t.string "company_name", default: "Your Stock", null: false
+    t.integer "main_store", default: 1, null: false
+    t.boolean "selling_in_percent", default: false, null: false
+    t.boolean "vat", default: false, null: false
+    t.boolean "withould", default: false, null: false
+    t.boolean "other_tax", default: false, null: false
+    t.boolean "fs_number", default: false, null: false
+    t.boolean "po_number", default: false, null: false
+    t.boolean "delivery_number", default: false, null: false
+    t.boolean "received_by", default: false, null: false
+    t.boolean "status", default: false, null: false
+    t.boolean "brand", default: false, null: false
+    t.boolean "cost", default: false, null: false
+    t.boolean "selling", default: false, null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "stock_products", force: :cascade do |t|
+    t.integer "quantity"
+    t.bigint "stock_id", null: false
+    t.bigint "product_id", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_stock_products_on_product_id"
+    t.index ["stock_id"], name: "index_stock_products_on_stock_id"
   end
 
   create_table "stocks", force: :cascade do |t|
-    t.string "name"
-    t.bigint "user_id", null: false
+    t.string "name", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_stocks_on_user_id"
   end
 
   create_table "transfers", force: :cascade do |t|
-    t.bigint "user_id", null: false
+    t.bigint "product_id", null: false
     t.date "date"
-    t.string "from"
-    t.string "to"
+    t.integer "from"
+    t.integer "to"
     t.integer "quantity"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_transfers_on_user_id"
+    t.index ["product_id"], name: "index_transfers_on_product_id"
   end
 
   create_table "users", force: :cascade do |t|
@@ -135,25 +144,18 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_18_171145) do
 
   create_table "vendors", force: :cascade do |t|
     t.string "name"
-    t.bigint "user_id", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["user_id"], name: "index_vendors_on_user_id"
   end
 
-  add_foreign_key "categories", "users"
-  add_foreign_key "customers", "users"
   add_foreign_key "products", "categories"
-  add_foreign_key "products", "users"
   add_foreign_key "purchase_transactions", "products"
   add_foreign_key "purchase_transactions", "purchases"
   add_foreign_key "purchase_transactions", "vendors"
-  add_foreign_key "purchases", "users"
   add_foreign_key "sale_transactions", "customers"
   add_foreign_key "sale_transactions", "products"
   add_foreign_key "sale_transactions", "sales"
-  add_foreign_key "sales", "users"
-  add_foreign_key "stocks", "users"
-  add_foreign_key "transfers", "users"
-  add_foreign_key "vendors", "users"
+  add_foreign_key "stock_products", "products"
+  add_foreign_key "stock_products", "stocks"
+  add_foreign_key "transfers", "products"
 end

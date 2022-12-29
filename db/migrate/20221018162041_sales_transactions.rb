@@ -1,7 +1,7 @@
-class PurchaseTransactions < ActiveRecord::Migration[7.0]
+class SalesTransactions < ActiveRecord::Migration[7.0]
   def change
-    create_table :purchase_transactions do |t|
-      t.references :vendor, null: false, foreign_key: true
+    create_table :sale_transactions do |t|
+      t.references :customer, null: false, foreign_key: true
       t.string :transaction_number, null: false, unique: true
       t.string :reference_number, null: false, unique: true, default: ""
       t.string :po_number, null: false, unique: true, default: ""

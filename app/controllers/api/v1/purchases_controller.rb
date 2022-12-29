@@ -1,6 +1,4 @@
 class Api::V1::PurchasesController < ApplicationController
-  include CurrentUserConcern
-
   def index
     @purchases = Purchase.all
     render json: @purchases
@@ -42,6 +40,7 @@ class Api::V1::PurchasesController < ApplicationController
   private
 
   def purchase_params
-    params.require(:purchase).permit(:user_id, :date, :vendor_id, :product_id, :received_by, :reference_number, :quantity, :price, :status)
+    params.require(:purchase).permit(:date, :vendor_id, :product_id, :received_by, :reference_number, :quantity,
+                                     :price, :status)
   end
 end

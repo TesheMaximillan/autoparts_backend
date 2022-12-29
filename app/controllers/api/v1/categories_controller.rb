@@ -1,14 +1,11 @@
 class Api::V1::CategoriesController < ApplicationController
-  include CurrentUserConcern
-
   def index
-    @categories = Category.all
+    @categories = Category.all.order(:name)
     render json: @categories
   end
 
   def create
     @category = Category.new(category_params)
-    @category.user = @current_user
 
     if @category.save
       render json: @category, status: :created
@@ -42,6 +39,6 @@ class Api::V1::CategoriesController < ApplicationController
   private
 
   def category_params
-    params.require(:category).permit(:user_id, :name)
+    params.require(:category).permit(:name)
   end
 end

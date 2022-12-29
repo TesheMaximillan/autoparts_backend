@@ -1,10 +1,10 @@
-class PurchaseTransaction < ApplicationRecord
+class SalesTransaction < ApplicationRecord
   before_save :downcase_field
-  belongs_to :vendor
+  belongs_to :customer
 
-  has_many :purchases, dependent: :destroy
-  has_many :products, through: :purchases
-  has_many :stocks, through: :purchases
+  has_many :sales, dependent: :destroy
+  has_many :products, through: :sales
+  has_many :stocks, through: :sales
 
   validates :transaction_number, presence: true, length: { minimum: 3, maximum: 50 }, uniqueness: true
   validates :reference_number, presence: true, length: { minimum: 3, maximum: 50 }, uniqueness: true
