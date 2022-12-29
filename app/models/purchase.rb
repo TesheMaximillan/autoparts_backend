@@ -1,21 +1,13 @@
 class Purchase < ApplicationRecord
   # belongs_to :user
-  has_many :purchase_transactions, dependent: :destroy
-  has_many :products, through: :purchase_transactions
-  has_many :vendors, through: :purchase_transactions
 
-  validates :date, presence: true
-  validates :received_by, length: { minimum: 3, maximum: 50 }
-  validates :reference_number, presence: true, length: { minimum: 3, maximum: 50 }
-  validates :quantity, presence: true, numericality: { only_integer: true, greater_than: 0 }
-  validates :price, presence: true, numericality: { greater_than: 0 }
-  validates :status, presence: true, length: { minimum: 3, maximum: 50 }
+  belongs_to :product
+  belongs_to :stock
+  belongs_to :purchase_transaction
 
-  before_save :downcase_field
-
-  def downcase_field
-    received_by.downcase!
-    reference_number.downcase!
-    status.downcase!
-  end
+  validates :quantity, presence: true,
+                       numericality: { only_integer: true, greater_than_or_equal_to: 1,
+                                       message: 'Quantity must be greater than or equal to 1' }
+  validates :price, presence: true,
+                    numericality: { greater_than_or_equal_to: 0, message: 'Price must be greater than or equal to 0' }
 end
