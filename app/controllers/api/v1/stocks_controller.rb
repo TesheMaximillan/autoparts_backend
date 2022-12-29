@@ -1,6 +1,6 @@
 class Api::V1::StocksController < ApplicationController
   def index
-    @stocks = Stock.all
+    @stocks = Stock.all.order(name: :asc)
     render json: @stocks
   end
 
@@ -23,6 +23,7 @@ class Api::V1::StocksController < ApplicationController
         end
       }
     end
+
     render json: @stocks_products
   end
 

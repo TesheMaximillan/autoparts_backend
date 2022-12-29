@@ -1,6 +1,6 @@
 class Api::V1::VendorsController < ApplicationController
   def index
-    @vendors = Vendor.all
+    @vendors = Vendor.all.order(:name)
     render json: @vendors
   end
 

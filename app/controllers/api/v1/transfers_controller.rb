@@ -1,6 +1,6 @@
 class Api::V1::TransfersController < ApplicationController
   def index
-    @transfers = Transfer.all
+    @transfers = Transfer.all.order(date: :desc)
     render json: @transfers
   end
 
@@ -20,7 +20,7 @@ class Api::V1::TransfersController < ApplicationController
         render json: { errors: @transfer.errors.full_messages }, status: :unprocessable_entity
       end
     else
-      render json: { errors: 'Not enough stock' }, status: :unprocessable_entity
+      render json: { errors: ['Not enough stock'] }, status: :unprocessable_entity
     end
   end
 
@@ -78,7 +78,7 @@ class Api::V1::TransfersController < ApplicationController
     if quantity >= qty
       StockProduct.where(stock_id:, product_id:).first.update(quantity: quantity - qty)
     else
-      render json: { errors: 'Not enough stock' }, status: :unprocessable_entity
+      render json: { errors: ['Not enough stock'] }, status: :unprocessable_entity
     end
   end
 

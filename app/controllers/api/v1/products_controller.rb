@@ -4,8 +4,6 @@ class Api::V1::ProductsController < ApplicationController
   def index
     @products = @products.map do |product|
       quantity = StockProduct.where(product_id: product.id).pluck(:quantity).sum
-      next unless quantity.positive?
-
       {
         id: product.id,
         name: product.name,
@@ -27,7 +25,18 @@ class Api::V1::ProductsController < ApplicationController
 
     if @product.save
       StockProduct.create(stock_id: params[:stock_id], product_id: @product.id, quantity: params[:quantity])
-      render json: @product, status: :created
+      json_result = {
+        id: @product.id,
+        name: @product.name,
+        part_number: @product.part_number,
+        brand: @product.brand,
+        status: @product.status,
+        selling: @product.selling,
+        cost: @product.cost,
+        category_id: @product.category_id,
+        quantity: params[:quantity]
+      }
+      render json: json_result, status: :created
     else
       render json: { errors: @product.errors.messages }, status: :unprocessable_entity
     end
