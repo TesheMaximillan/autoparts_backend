@@ -4,13 +4,10 @@ class Product < ApplicationRecord
 
   has_many :stock_products, dependent: :destroy
   has_many :stocks, through: :stock_products
-
-  has_many :sale_transactions, dependent: :destroy
-  has_many :sale, through: :sale_transactions
-  has_many :customers, through: :sale_transactions
-  has_many :purchase_transactions, dependent: :destroy
-  has_many :purchases, through: :purchase_transactions
-  has_many :vendors, through: :purchase_transactions
+  has_many :sales, dependent: :destroy
+  has_many :sales_transactions, through: :sales
+  has_many :purchases, dependent: :destroy
+  has_many :purchase_transactions, through: :purchases
   has_many :transfers
 
   validates :name, presence: true,
