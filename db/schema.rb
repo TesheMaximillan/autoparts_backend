@@ -41,47 +41,63 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_27_194152) do
   end
 
   create_table "purchase_transactions", force: :cascade do |t|
-    t.bigint "product_id", null: false
-    t.bigint "purchase_id", null: false
     t.bigint "vendor_id", null: false
+    t.string "transaction_number", null: false
+    t.string "reference_number", default: "", null: false
+    t.string "po_number", default: "", null: false
+    t.string "delivery_number", default: "", null: false
+    t.datetime "date", null: false
+    t.string "received_by", default: "", null: false
+    t.string "status", default: "cash", null: false
+    t.decimal "vat", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "withold", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "other_costs", precision: 10, scale: 2, default: "0.0", null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["product_id"], name: "index_purchase_transactions_on_product_id"
-    t.index ["purchase_id"], name: "index_purchase_transactions_on_purchase_id"
     t.index ["vendor_id"], name: "index_purchase_transactions_on_vendor_id"
   end
 
   create_table "purchases", force: :cascade do |t|
-    t.date "date"
-    t.string "received_by"
-    t.string "reference_number"
-    t.string "status"
-    t.integer "quantity"
-    t.decimal "price", precision: 8, scale: 2
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "sale_transactions", force: :cascade do |t|
-    t.bigint "sale_id", null: false
+    t.bigint "stock_id", null: false
     t.bigint "product_id", null: false
-    t.bigint "customer_id", null: false
+    t.bigint "purchase_transaction_id", null: false
+    t.integer "quantity", null: false
+    t.decimal "price", precision: 8, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["customer_id"], name: "index_sale_transactions_on_customer_id"
-    t.index ["product_id"], name: "index_sale_transactions_on_product_id"
-    t.index ["sale_id"], name: "index_sale_transactions_on_sale_id"
+    t.index ["product_id"], name: "index_purchases_on_product_id"
+    t.index ["purchase_transaction_id"], name: "index_purchases_on_purchase_transaction_id"
+    t.index ["stock_id"], name: "index_purchases_on_stock_id"
   end
 
   create_table "sales", force: :cascade do |t|
-    t.date "date"
-    t.string "received_by"
-    t.string "reference_number"
-    t.string "status"
-    t.integer "quantity"
-    t.decimal "price", precision: 8, scale: 2
+    t.bigint "stock_id", null: false
+    t.bigint "product_id", null: false
+    t.bigint "sales_transaction_id", null: false
+    t.integer "quantity", null: false
+    t.decimal "price", precision: 8, scale: 2, null: false
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["product_id"], name: "index_sales_on_product_id"
+    t.index ["sales_transaction_id"], name: "index_sales_on_sales_transaction_id"
+    t.index ["stock_id"], name: "index_sales_on_stock_id"
+  end
+
+  create_table "sales_transactions", force: :cascade do |t|
+    t.bigint "customer_id", null: false
+    t.string "transaction_number", null: false
+    t.string "reference_number", default: "", null: false
+    t.string "po_number", default: "", null: false
+    t.string "delivery_number", default: "", null: false
+    t.datetime "date", null: false
+    t.string "received_by", default: "", null: false
+    t.string "status", default: "cash", null: false
+    t.decimal "vat", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "withold", precision: 10, scale: 2, default: "0.0", null: false
+    t.decimal "other_costs", precision: 10, scale: 2, default: "0.0", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["customer_id"], name: "index_sales_transactions_on_customer_id"
   end
 
   create_table "settings", force: :cascade do |t|
@@ -149,12 +165,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_27_194152) do
   end
 
   add_foreign_key "products", "categories"
-  add_foreign_key "purchase_transactions", "products"
-  add_foreign_key "purchase_transactions", "purchases"
   add_foreign_key "purchase_transactions", "vendors"
-  add_foreign_key "sale_transactions", "customers"
-  add_foreign_key "sale_transactions", "products"
-  add_foreign_key "sale_transactions", "sales"
+  add_foreign_key "purchases", "products"
+  add_foreign_key "purchases", "purchase_transactions"
+  add_foreign_key "purchases", "stocks"
+  add_foreign_key "sales", "products"
+  add_foreign_key "sales", "sales_transactions"
+  add_foreign_key "sales", "stocks"
+  add_foreign_key "sales_transactions", "customers"
   add_foreign_key "stock_products", "products"
   add_foreign_key "stock_products", "stocks"
   add_foreign_key "transfers", "products"

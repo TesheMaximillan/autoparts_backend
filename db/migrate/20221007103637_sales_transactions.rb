@@ -1,6 +1,6 @@
 class SalesTransactions < ActiveRecord::Migration[7.0]
   def change
-    create_table :sale_transactions do |t|
+    create_table :sales_transactions do |t|
       t.references :customer, null: false, foreign_key: true
       t.string :transaction_number, null: false, unique: true
       t.string :reference_number, null: false, unique: true, default: ""
