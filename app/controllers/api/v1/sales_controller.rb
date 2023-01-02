@@ -1,30 +1,27 @@
 class Api::V1::SalesController < ApplicationController
-  def index
-    @sales = Sale.all
-    render json: @sales
-  end
-
   def create
-    @sale = Sale.new(sale_params)
+    transaction_id = SalesTransaction.where(transaction_number: params[:transaction_number]).first.id
+    @sale = Sale.new(stock_id: params[:stock_id], sales_transaction_id: transaction_id,
+                     product_id: params[:product_id], quantity: params[:quantity], price: params[:price])
 
     if @sale.save
+      stock_product = StockProduct.where(stock_id: params[:stock_id], product_id: params[:product_id]).first
+      render json: { message: 'Not enough quantity in your stock' } if stock_product.quantity < params[:quantity].to_i
+
+      stock_product.update(quantity: stock_product.quantity - params[:quantity])
       render json: @sale, status: :created
     else
       render json: { errors: @sale.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  def show
-    @sale = Sale.find(params[:id])
-    render json: @sale
-  end
-
   def update
     @sale = Sale.find(params[:id])
-    @sale.update(sale_params)
-
-    if @sale.valid?
-      render json: @sale, status: :created
+    updated_quantity = @sale.quantity - params[:quantity].to_i
+    if @sale.update(sale_params)
+      stock_product = StockProduct.where(stock_id: @sale.stock_id, product_id: @sale.product_id).first
+      stock_product.update(quantity: stock_product.quantity + updated_quantity)
+      render json: @sale
     else
       render json: { errors: @sale.errors.full_messages }, status: :unprocessable_entity
     end
@@ -32,14 +29,19 @@ class Api::V1::SalesController < ApplicationController
 
   def destroy
     @sale = Sale.find(params[:id])
-    @sale.destroy
-    render json: @sale
+
+    if @sale.destroy
+      stock_product = StockProduct.where(stock_id: @sale.stock_id, product_id: @sale.product_id).first
+      stock_product.update(quantity: stock_product.quantity + @sale.quantity)
+      render json: { message: 'Sale deleted' }
+    else
+      render json: { errors: @sale.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 
   private
 
   def sale_params
-    params.require(:sale).permit(:user_id, :date, :customer_id, :product_id, :received_by, :reference_number,
-                                 :quantity, :price, :status)
+    params.require(:sale).permit(:stock_id, :sales_transaction_id, :product_id, :quantity, :price)
   end
 end
