@@ -2,7 +2,8 @@ class Api::V1::PurchasesController < ApplicationController
   def create
     transaction_id = PurchaseTransaction.where(transaction_number: params[:transaction_number]).first.id
 
-    @purchase = Purchase.new(stock_id: params[:stock_id], purchase_transaction_id: transaction_id, product_id: params[:product_id], quantity: params[:quantity], price: params[:price])
+    @purchase = Purchase.new(stock_id: params[:stock_id], purchase_transaction_id: transaction_id,
+                             product_id: params[:product_id], quantity: params[:quantity], price: params[:price])
 
     if @purchase.save
       stock_product = StockProduct.where(stock_id: params[:stock_id], product_id: params[:product_id]).first
