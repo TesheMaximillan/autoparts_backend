@@ -1,31 +1,25 @@
 class Api::V1::PurchasesController < ApplicationController
-  def index
-    @purchases = Purchase.all
-    render json: @purchases
-  end
-
   def create
-    @purchase = Purchase.new(purchase_params)
-    @purchase.user = @current_user
+    transaction_id = PurchaseTransaction.where(transaction_number: params[:transaction_number]).first.id
+
+    @purchase = Purchase.new(stock_id: params[:stock_id], purchase_transaction_id: transaction_id, product_id: params[:product_id], quantity: params[:quantity], price: params[:price])
 
     if @purchase.save
+      stock_product = StockProduct.where(stock_id: params[:stock_id], product_id: params[:product_id]).first
+      stock_product.update(quantity: stock_product.quantity + params[:quantity].to_i)
       render json: @purchase, status: :created
     else
       render json: { errors: @purchase.errors.full_messages }, status: :unprocessable_entity
     end
   end
 
-  def show
-    @purchase = Purchase.find(params[:id])
-    render json: @purchase
-  end
-
   def update
     @purchase = Purchase.find(params[:id])
-    @purchase.update(purchase_params)
-
-    if @purchase.valid?
-      render json: @purchase, status: :created
+    updated_quantity = @purchase.quantity - params[:quantity].to_i
+    if @purchase.update(purchase_params)
+      stock_product = StockProduct.where(stock_id: @purchase.stock_id, product_id: @purchase.product_id).first
+      stock_product.update(quantity: stock_product.quantity - updated_quantity)
+      render json: @purchase
     else
       render json: { errors: @purchase.errors.full_messages }, status: :unprocessable_entity
     end
@@ -33,14 +27,13 @@ class Api::V1::PurchasesController < ApplicationController
 
   def destroy
     @purchase = Purchase.find(params[:id])
-    @purchase.destroy
-    render json: @purchase
-  end
 
-  private
-
-  def purchase_params
-    params.require(:purchase).permit(:date, :vendor_id, :product_id, :received_by, :reference_number, :quantity,
-                                     :price, :status)
+    if @purchase.destroy
+      stock_product = StockProduct.where(stock_id: @purchase.stock_id, product_id: @purchase.product_id).first
+      stock_product.update(quantity: stock_product.quantity - @purchase.quantity)
+      render json: { message: 'Purchase deleted' }
+    else
+      render json: { errors: @purchase.errors.full_messages }, status: :unprocessable_entity
+    end
   end
 end
