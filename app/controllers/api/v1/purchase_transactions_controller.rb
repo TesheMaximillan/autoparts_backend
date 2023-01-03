@@ -1,7 +1,13 @@
 class Api::V1::PurchaseTransactionsController < ApplicationController
   def index
     @purchase_transactions = PurchaseTransaction.all
-    render json: @purchase_transactions
+    purchase_transactions = @purchase_transactions.map do |purchase_transaction|
+      [
+        purchase_transaction,
+        purchase_transaction.purchases
+      ]
+    end
+    render json: purchase_transactions
   end
 
   def create
