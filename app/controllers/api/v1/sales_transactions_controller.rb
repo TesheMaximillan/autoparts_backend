@@ -1,13 +1,13 @@
 class Api::V1::SalesTransactionsController < ApplicationController
   def index
     @sales_transactions = SalesTransaction.all
-    sales_transactions = @sales_transactions.map do |transaction|
-      {
-        transaction:,
-        sales: Sale.where(transaction_number: transaction.transaction_number)
-      }
+    sales_transactions = @sales_transactions.map do |sales_transaction|
+      [
+        sales_transaction,
+        sales_transaction.sales
+      ]
     end
-    render json: sales_transactions.compact
+    render json: sales_transactions
   end
 
   def create
