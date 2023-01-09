@@ -31,7 +31,11 @@ class Api::V1::PurchasesController < ApplicationController
 
     if @purchase.destroy
       stock_product = StockProduct.where(stock_id: @purchase.stock_id, product_id: @purchase.product_id).first
-      stock_product.update(quantity: stock_product.quantity - @purchase.quantity)
+      if stock_product.quantity >= @purchase.quantity
+        stock_product.update(quantity: stock_product.quantity - @purchase.quantity)
+      else
+        render json: { message: 'Not enough quantity in your stock' }
+      end
       render json: { message: 'Purchase deleted' }
     else
       render json: { errors: @purchase.errors.full_messages }, status: :unprocessable_entity

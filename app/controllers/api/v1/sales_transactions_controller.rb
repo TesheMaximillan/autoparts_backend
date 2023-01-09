@@ -38,6 +38,10 @@ class Api::V1::SalesTransactionsController < ApplicationController
 
   def destroy
     @sales_transaction = SalesTransaction.find(params[:id])
+    @sales_transaction.sales.map do |sale|
+      stock_product = StockProduct.where(stock_id: sale.stock_id, product_id: sale.product_id).first
+      stock_product.update(quantity: stock_product.quantity + sale.quantity)
+    end
     @sales_transaction.destroy
     render json: @sales_transaction
   end
