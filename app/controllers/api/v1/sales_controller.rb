@@ -6,10 +6,13 @@ class Api::V1::SalesController < ApplicationController
 
     if @sale.save
       stock_product = StockProduct.where(stock_id: params[:stock_id], product_id: params[:product_id]).first
-      render json: { message: 'Not enough quantity in your stock' } if stock_product.quantity < params[:quantity].to_i
 
-      stock_product.update(quantity: stock_product.quantity - params[:quantity])
-      render json: @sale, status: :created
+      if stock_product.quantity < params[:quantity].to_i
+        render json: { message: 'Not enough quantity in your stock' }
+      else
+        stock_product.update(quantity: stock_product.quantity - params[:quantity])
+        render json: @sale, status: :created
+      end
     else
       render json: { errors: @sale.errors.full_messages }, status: :unprocessable_entity
     end
