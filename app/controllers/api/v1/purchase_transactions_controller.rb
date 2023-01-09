@@ -38,6 +38,14 @@ class Api::V1::PurchaseTransactionsController < ApplicationController
 
   def destroy
     @purchase_transaction = PurchaseTransaction.find(params[:id])
+    @purchase_transaction.purchases.map do |purchase|
+      stock_product = StockProduct.where(stock_id: purchase.stock_id, product_id: purchase.product_id).first
+      if stock_product.quantity >= purchase.quantity
+        stock_product.update(quantity: stock_product.quantity - purchase.quantity)
+      else
+        render json: { message: 'Not enough stock' }, status: :unprocessable_entity
+      end
+    end
     @purchase_transaction.destroy
     render json: @purchase_transaction
   end
